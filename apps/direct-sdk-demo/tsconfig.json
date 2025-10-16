@@ -1,0 +1,21 @@
+{
+  "extends": "@demo/typescript-config/react-library.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "paths": {
+      "@demo/sdk": [
+        "./local-sdk/index.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "local-sdk"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

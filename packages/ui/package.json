@@ -1,9 +1,16 @@
 {
-  "name": "@repo/ui",
-  "version": "0.0.0",
+  "name": "@demo/ui",
+  "version": "0.0.1",
   "private": true,
+  "main": "./src/index.ts",
+  "module": "./src/index.ts",
+  "types": "./src/index.ts",
   "exports": {
-    "./*": "./src/*.tsx"
+    ".": {
+      "import": "./src/index.ts",
+      "require": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
@@ -11,8 +18,8 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@repo/eslint-config": "*",
-    "@repo/typescript-config": "*",
+    "@demo/eslint-config": "workspace:*",
+    "@demo/typescript-config": "workspace:*",
     "@types/node": "^22.15.3",
     "@types/react": "19.1.0",
     "@types/react-dom": "19.1.1",
@@ -20,7 +27,11 @@
     "typescript": "5.9.2"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.14",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.14"
   }
 }

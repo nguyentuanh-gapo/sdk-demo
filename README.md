@@ -1,135 +1,149 @@
-# Turborepo starter
+# Sdk-demo Turborepo
 
-This Turborepo starter is maintained by the Turborepo core team.
+Đây là một monorepo trình diễn cách tích hợp và sử dụng SDK tùy chỉnh trong các loại ứng dụng khác nhau (Angular, React, HTML thuần).
 
-## Using this example
+## Cấu trúc dự án
 
-Run the following command:
+Monorepo này bao gồm các ứng dụng và gói sau:
 
-```sh
-npx create-turbo@latest
+### Apps (Ứng dụng demo)
+
+- `angular-sdk-demo`: Ứng dụng demo Angular tích hợp SDK.
+- `direct-sdk-demo`: Ứng dụng demo React/Vite tích hợp SDK thông qua cấu hình alias.
+- `html-sdk-demo`: Ứng dụng demo HTML thuần tích hợp SDK bằng cách tải trực tiếp script UMD.
+- `web-demo`: Ứng dụng demo React/Vite tích hợp SDK.
+
+### Packages (Gói)
+
+- `sdk`: Gói SDK chính chứa mã nguồn của SDK.
+- `eslint-config`: Cấu hình ESLint được chia sẻ.
+- `typescript-config`: Cấu hình TypeScript được chia sẻ.
+- `ui`: Thư viện thành phần React được chia sẻ.
+
+## Scripts khả dụng
+
+Bạn có thể chạy các lệnh script sau từ thư mục gốc của dự án:
+
+- `pnpm build`: Xây dựng tất cả các ứng dụng và gói trong monorepo.
+- `pnpm dev:web-demo`: Chạy ứng dụng web-demo ở chế độ phát triển.
+- `pnpm dev:direct-sdk-demo`: Chạy ứng dụng direct-sdk-demo ở chế độ phát triển.
+- `pnpm dev:angular-sdk-demo`: Chạy ứng dụng angular-sdk-demo ở chế độ phát triển.
+- `pnpm dev:html-sdk-demo`: Chạy ứng dụng html-sdk-demo ở chế độ phát triển (sử dụng http-server).
+- `pnpm lint`: Chạy linting cho tất cả các ứng dụng và gói.
+- `pnpm format`: Định dạng mã nguồn bằng Prettier.
+- `pnpm check-types`: Kiểm tra lỗi kiểu TypeScript cho tất cả các ứng dụng và gói.
+
+## Tích hợp SDK vào các dự án Demo
+
+SDK (`packages/sdk`) được xây dựng thành các tệp phân phối (UMD, ES module, kiểu) trong thư mục `dist`. Các ứng dụng demo sử dụng các tệp này thông qua thư mục `local-sdk` được sao chép từ `packages/sdk/dist`.
+
+### 1. Build SDK
+
+Để đảm bảo các ứng dụng demo sử dụng phiên bản SDK mới nhất, bạn cần build gói `sdk`:
+
+```bash
+pnpm --filter @demo/sdk build
 ```
 
-## What's inside?
+### 2. Sao chép SDK vào `local-sdk` (cho React/Vite)
 
-This Turborepo includes the following packages/apps:
+Các ứng dụng demo React/Vite (`direct-sdk-demo` và `web-demo`) sử dụng một thư mục `local-sdk` trong thư mục ứng dụng của chúng để chứa các tệp phân phối của SDK. Lệnh này được tự động chạy trong các script `dev` và `build` của các ứng dụng đó:
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+```bash
+pmkdir -p apps/direct-sdk-demo/local-sdk && cp -r packages/sdk/dist/* apps/direct-sdk-demo/local-sdk/
+pmkdir -p apps/web-demo/local-sdk && cp -r packages/sdk/dist/* apps/web-demo/local-sdk/
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+_(Lưu ý: Các lệnh `dev` và `build` trong `package.json` của từng ứng dụng đã được cấu hình để thực hiện bước này tự động.)_
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+### 3. Cấu hình ứng dụng để sử dụng SDK cục bộ
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+#### a) `direct-sdk-demo` và `web-demo` (React/Vite)
 
-### Develop
+Các ứng dụng này sử dụng alias trong `vite.config.ts` và `paths` trong `tsconfig.json` để phân giải `@demo/sdk` đến thư mục `local-sdk` của chúng.
 
-To develop all apps and packages, run the following command:
+**`apps/<app-name>/vite.config.ts`:**
 
-```
-cd my-turborepo
+```typescript
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+export default defineConfig({
+  plugins: [react()],
+  resolve: {
+    alias: {
+      "@demo/sdk": path.resolve(__dirname, "./local-sdk/index.es.js"),
+      "@demo/sdk/style.css": path.resolve(__dirname, "./local-sdk/style.css"),
+    },
+  },
+});
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+**`apps/<app-name>/tsconfig.json`:**
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
-
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+```json
+{
+  "compilerOptions": {
+    "paths": {
+      "@demo/sdk": ["./local-sdk"]
+    }
+  },
+  "include": ["src", "local-sdk"]
+}
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+Với cấu hình này, bạn có thể import SDK như sau trong `src/main.tsx`:
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+```typescript
+import { DemoSDK } from "@demo/sdk";
+import "../local-sdk/style.css"; // Nhập trực tiếp kiểu CSS
 ```
 
-## Useful Links
+#### b) `html-sdk-demo` (HTML thuần)
 
-Learn more about the power of Turborepo:
+Ứng dụng này tải SDK trực tiếp từ tệp UMD trong thư mục `local-sdk` của nó.
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+**`apps/html-sdk-demo/index.html`:**
+
+```html
+<!-- Load the UMD build of the SDK -->
+<script src="../../packages/sdk/dist/index.umd.js"></script>
+<link rel="stylesheet" href="./style.css" />
+<!-- Hoặc nếu bạn muốn dùng style của SDK, dùng đường dẫn tương đối đến packages/sdk/dist/style.css -->
+<!-- <link rel="stylesheet" href="../../packages/sdk/dist/style.css" /> -->
+```
+
+Bạn có thể tương tác với SDK thông qua đối tượng `window.MySDK` trong script của mình.
+
+#### c) `angular-sdk-demo` (Angular)
+
+Để tích hợp SDK vào Angular, bạn cần đảm bảo các tệp SDK được build và sau đó có thể được sử dụng trong dự án Angular. Thông thường, bạn sẽ import SDK từ `local-sdk` hoặc cấu hình Angular để phân giải gói `@demo/sdk`.
+
+**`apps/angular-sdk-demo/src/app/app.component.ts`:**
+
+```typescript
+import { Component } from "@angular/core";
+import { DemoSDK } from "../../../packages/sdk"; // Hoặc đường dẫn đến local-sdk
+
+@Component({
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.css"],
+})
+export class AppComponent {
+  sdkOptions = {
+    language: "en",
+    theme: "dark",
+    token: "static-angular-token",
+  };
+}
+```
+
+**`apps/angular-sdk-demo/src/app/app.component.html`:**
+
+```html
+<demo-sdk [options]="sdkOptions"></demo-sdk>
+```
+
+_(Lưu ý: Bạn có thể cần cấu hình thêm trong `angular.json` hoặc `tsconfig.json` của Angular để phân giải gói SDK hoặc các tệp kiểu.)_

@@ -1,0 +1,68 @@
+<h1 style="text-align: center; margin-top: 40px">Angular SDK Demo</h1>
+
+<div style="display: flex; justify-content: center; margin-top: 20px">
+  <button
+    (click)="setLanguage('en')"
+    style="
+      margin-right: 10px;
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    "
+  >
+    Set English
+  </button>
+  <button
+    (click)="setLanguage('vi')"
+    style="
+      margin-right: 10px;
+      padding: 8px 16px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    "
+  >
+    Set Vietnamese
+  </button>
+  <button
+    (click)="setTheme('dark')"
+    style="
+      margin-right: 10px;
+      padding: 8px 16px;
+      background-color: #343a40;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    "
+  >
+    Set Dark Theme
+  </button>
+  <button
+    (click)="setTheme('light')"
+    style="
+      padding: 8px 16px;
+      background-color: #ffc107;
+      color: black;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    "
+  >
+    Set Light Theme
+  </button>
+</div>
+<div
+  *ngIf="isTokenExpired"
+  style="color: red; font-weight: bold; text-align: center; margin-top: 10px"
+>
+  Expired Token!
+</div>
+<div style="display: flex; justify-content: center; margin-top: 20px">
+  <div #sdkContainer></div>
+</div>

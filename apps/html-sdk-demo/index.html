@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML SDK Demo</title>
+    <link rel="stylesheet" href="../../packages/sdk/dist/style.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="wrapper-style">
+      <h1>HTML Only SDK Demo</h1>
+      <div class="container-style">
+        <button onclick="setLanguage('en')" class="button-primary">
+          Set English
+        </button>
+        <button onclick="setLanguage('fr')" class="button-success">
+          Set French
+        </button>
+        <button onclick="setTheme('dark')" class="button-dark">
+          Set Dark Theme
+        </button>
+        <button onclick="setTheme('light')" class="button-warning">
+          Set Light Theme
+        </button>
+      </div>
+      <div id="sdk-widget-container" style="margin-top: 20px"></div>
+      <div
+        id="expired-token-status"
+        style="color: red; font-weight: bold; margin-top: 10px; display: none"
+      >
+        Expired Token!
+      </div>
+    </div>
+
+    <!-- Load React and ReactDOM from CDN -->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+
+    <!-- Load the UMD build of the SDK -->
+    <script src="../../packages/sdk/dist/index.umd.js"></script>
+    <script>
+      let sdkOptions = {
+        theme: "light",
+        language: "fr",
+        token: "static-html-token",
+        onExpiredToken: () => {
+          const statusElement = document.getElementById("expired-token-status");
+          if (statusElement) {
+            statusElement.style.display = "block";
+          }
+          console.log("HTML Demo: Token Expired!");
+        },
+      };
+
+      function renderSDK() {
+        const container = document.getElementById("sdk-widget-container");
+        if (container) {
+          const root = ReactDOM.createRoot(container);
+          root.render(
+            React.createElement(window.MySDK.DemoSDK, {
+              options: sdkOptions,
+            })
+          );
+        }
+      }
+
+      function setLanguage(language) {
+        const statusElement = document.getElementById("expired-token-status");
+        if (statusElement) {
+          statusElement.style.display = "none";
+        }
+        sdkOptions = { ...sdkOptions, language };
+        renderSDK();
+      }
+
+      function setTheme(theme) {
+        const statusElement = document.getElementById("expired-token-status");
+        if (statusElement) {
+          statusElement.style.display = "none";
+        }
+        sdkOptions = { ...sdkOptions, theme };
+        renderSDK();
+      }
+
+      renderSDK();
+    </script>
+  </body>
+</html>
