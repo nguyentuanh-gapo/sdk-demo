@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML SDK Demo</title>
+    <link rel="stylesheet" href="./local-sdk/style.css" />
+  </head>
+  <body>
+    <h1>HTML Only SDK Demo</h1>
+    <div id="sdk-widget-container" style="margin-top: 20px"></div>
+
+    <!-- Load React and ReactDOM from CDN -->
+    <script
+      crossorigin
+      src="https://unpkg.com/react@18/umd/react.production.min.js"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"
+    ></script>
+
+    <!-- Load the UMD build of the SDK -->
+    <script src="./local-sdk/index.umd.js"></script>
+    <script>
+      // Initialize the SDK and get options
+      window.MySDK.initGapoSDK({
+        theme: "light",
+        language: "fr",
+        token: "static-html-token",
+      });
+
+      // Render the Widget
+      const container = document.getElementById("sdk-widget-container");
+      if (container) {
+        const root = ReactDOM.createRoot(container);
+        root.render(React.createElement(window.MySDK.Widget));
+      }
+    </script>
+  </body>
+</html>

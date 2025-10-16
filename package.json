@@ -3,12 +3,16 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev:web-demo": "turbo dev --filter=web-demo",
+    "dev:direct-sdk-demo": "turbo dev --filter=direct-sdk-demo",
+    "dev:angular-sdk-demo": "turbo dev --filter=angular-sdk-demo",
+    "dev:html-sdk-demo": "http-server . -p 8080 -o apps/html-sdk-demo/",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "http-server": "^14.1.1",
     "prettier": "^3.6.2",
     "turbo": "^2.5.8",
     "typescript": "5.9.2"
@@ -16,9 +20,15 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "yarn@1.22.22",
+  "packageManager": "pnpm@9.0.6",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.14",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.14"
+  }
 }

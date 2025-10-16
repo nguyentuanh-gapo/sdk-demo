@@ -1,0 +1,14 @@
+{
+  "extends": "../../packages/typescript-config/react-library.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": ".",
+    "allowSyntheticDefaultImports": true,
+    "allowJs": true,
+    "paths": {
+      "@gapo/sdk": ["./local-sdk"]
+    }
+  },
+  "include": ["src", "local-sdk"],
+  "exclude": ["node_modules"]
+}
